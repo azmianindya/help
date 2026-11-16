@@ -10,6 +10,7 @@ type StatsCardProps = {
 }
 
 const StatsCard = ({ label, value, trend, icon: Icon, iconClassName }: StatsCardProps) => {
+  throw new Error('Tes Error StatsCard')
   const isUp = trend >= 0
   const TrendIcon = isUp ? ArrowUp : ArrowDown
 

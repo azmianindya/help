@@ -7,6 +7,20 @@ import { NOTIFICATION_COUNT, statCards } from '@/features/dashboard/data'
 import { useAuthStore } from '@/lib/auth-store'
 import { getTicketStats, getTickets } from '@/lib/tickets'
 import type { Ticket } from '@/lib/types'
+import ErrorBoundary from '@/providers/ErrorBoundary'
+
+const WidgetError = () => (
+  <div className="flex h-full min-h-[220px] items-center justify-center rounded-2xl border border-red-200 bg-white p-6 text-center shadow-sm">
+    <div>
+      <p className="font-semibold text-slate-800">
+        Oops! Terjadi Kesalahan
+      </p>
+      <p className="mt-1 text-sm text-slate-500">
+        Komponen gagal dimuat. Silakan coba kembali.
+      </p>
+    </div>
+  </div>
+)
 
 const Dashboard = () => {
   const user = useAuthStore((state) => state.user)
@@ -38,6 +52,7 @@ const Dashboard = () => {
   const stats = getTicketStats(tickets)
 
   const keyword = search.trim().toLowerCase()
+
   const recentTickets = tickets
     .filter(
       (ticket) =>
@@ -48,6 +63,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex flex-col gap-8">
+      {/* Header */}
       <Header
         name={user?.firstName ?? 'there'}
         image={user?.image}
@@ -56,35 +72,59 @@ const Dashboard = () => {
         notificationCount={NOTIFICATION_COUNT}
       />
 
-      {isLoading && <div className="py-16 text-center text-slate-500">Memuat data...</div>}
-
-      {hasError && (
-        <div className="py-16 text-center text-red-600">
-          Gagal memuat data dashboard. Coba refresh halaman.
+      {/* Loading State */}
+      {isLoading && (
+        <div className="py-16 text-center text-slate-500">
+          Memuat data...
         </div>
       )}
 
-      {!isLoading && !hasError && (
+      {/* Dashboard Content */}
+      {!isLoading && (
         <>
+          {/* Stats Cards */}
           <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
-            {statCards.map((card) => (
-              <StatsCard
-                key={card.key}
-                label={card.label}
-                value={stats[card.key]}
-                trend={card.trend}
-                icon={card.icon}
-                iconClassName={card.iconClassName}
-              />
-            ))}
+            {hasError ? (
+              <div className="col-span-full">
+                <WidgetError />
+              </div>
+            ) : (
+              statCards.map((card) => (
+                <ErrorBoundary key={card.key}>
+                  <StatsCard
+                    label={card.label}
+                    value={stats[card.key]}
+                    trend={card.trend}
+                    icon={card.icon}
+                    iconClassName={card.iconClassName}
+                  />
+                </ErrorBoundary>
+              ))
+            )}
           </div>
 
+          {/* Dashboard Widgets */}
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
+            {/* Status Chart */}
             <div className="lg:col-span-2">
-              <StatusChart stats={stats} />
+              {hasError ? (
+                <WidgetError />
+              ) : (
+                <ErrorBoundary fallbackTitle="Status Ticket">
+                  <StatusChart stats={stats} />
+                </ErrorBoundary>
+              )}
             </div>
+
+            {/* Recent Tickets */}
             <div className="lg:col-span-3">
-              <RecentTicket tickets={recentTickets} />
+              {hasError ? (
+                <WidgetError />
+              ) : (
+                <ErrorBoundary fallbackTitle="Recent Tickets">
+                  <RecentTicket tickets={recentTickets} />
+                </ErrorBoundary>
+              )}
             </div>
           </div>
         </>

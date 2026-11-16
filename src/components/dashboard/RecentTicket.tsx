@@ -14,6 +14,7 @@ const statusStyle: Record<TicketStatus, string> = {
 }
 
 const RecentTicket = ({ tickets }: RecentTicketProps) => {
+  throw new Error('Tes Error RecentCard')
   return (
     <div className="h-full rounded-2xl bg-white p-6 shadow-sm">
       <div className="mb-4 flex items-center justify-between">

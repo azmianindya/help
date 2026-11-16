@@ -9,6 +9,7 @@ const RADIUS = 40
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 
 const StatusChart = ({ stats }: StatusChartProps) => {
+  
   const lengths = statusChartItems.map((item) =>
     stats.total ? (stats[item.key] / stats.total) * CIRCUMFERENCE : 0,
   )

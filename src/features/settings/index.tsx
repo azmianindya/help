@@ -1,7 +1,7 @@
-const index = () => {
+const Settings = () => {
   return (
     <div>index</div>
   )
 }
 
-export default index
+export default Settings

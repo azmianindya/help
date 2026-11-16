@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { LifeBuoy, LogOut } from 'lucide-react'
+import { LogoutButton } from '@/components/Button'
 import { useAuthStore } from '@/lib/auth-store'
 import { getMenuByRole } from '@/lib/menu'
 
@@ -9,12 +10,7 @@ const linkInactive = 'text-slate-300 hover:bg-white/10 hover:text-white'
 
 const Sidebar = () => {
   const role = useAuthStore((state) => state.user?.role)
-  const logout = useAuthStore((state) => state.logout)
   const menus = getMenuByRole(role)
-  const handleLogout = () => {
-    logout()
-    window.location.href = '/login'
-  }
 
   return (
     <div className="flex h-screen w-60 shrink-0 flex-col bg-[#20243A] px-4 py-6">
@@ -40,14 +36,10 @@ const Sidebar = () => {
         ))}
       </div>
 
-      <button
-        type="button"
-        onClick={handleLogout}
-        className={`${linkBase} ${linkInactive} w-full cursor-pointer`}
-      >
+      <LogoutButton className={`${linkBase} ${linkInactive} w-full`}>
         <LogOut size={18} />
         <div>Logout</div>
-      </button>
+      </LogoutButton>
     </div>
   )
 }
